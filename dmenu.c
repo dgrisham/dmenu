@@ -448,6 +448,7 @@ insert:
 		sel = curr = matches;
 		calcoffsets();
 		break;
+	case XK_ISO_Left_Tab: // shift + tab
 	case XK_Left:
 	case XK_KP_Left:
 		if (cursor > 0 && (!sel || !sel->left || lines > 0)) {
@@ -488,6 +489,7 @@ insert:
 		if (sel)
 			sel->out = 1;
 		break;
+	case XK_Tab:
 	case XK_Right:
 	case XK_KP_Right:
 		if (text[cursor] != '\0') {
@@ -503,14 +505,6 @@ insert:
 			curr = next;
 			calcoffsets();
 		}
-		break;
-	case XK_Tab:
-		if (!sel)
-			return;
-		strncpy(text, sel->text, sizeof text - 1);
-		text[sizeof text - 1] = '\0';
-		cursor = strlen(text);
-		match();
 		break;
 	}
 
