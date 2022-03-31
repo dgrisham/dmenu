@@ -464,6 +464,9 @@ keypress(XKeyEvent *ev)
 		case XK_Return:
 		case XK_KP_Enter:
 			break;
+    	case XK_space:
+    	case XK_KP_Space:
+        	break;
 		case XK_bracketleft:
 			cleanup();
 			exit(1);
@@ -486,6 +489,12 @@ keypress(XKeyEvent *ev)
 		case XK_l: ksym = XK_Down;  break;
 		default:
 			return;
+		}
+	} else {
+		switch(ksym) {
+		case XK_space:
+		case XK_KP_Space:
+			goto insert;
 		}
 	}
 
@@ -593,6 +602,16 @@ insert:
 			calcoffsets();
 		}
 		break;
+	case XK_space:
+	case XK_KP_Space:
+		if (ev->state & ControlMask) {
+			if (!sel) return;
+			strncpy(text, sel->text, sizeof text - 1);
+			text[sizeof text - 1] = '\0';
+			cursor = strlen(text);
+			match();
+			break;
+		}
 	}
 
 draw:
