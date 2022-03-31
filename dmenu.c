@@ -427,7 +427,7 @@ keypress(XKeyEvent *ev)
 		case XK_f: ksym = XK_Right;     break;
 		case XK_g: ksym = XK_Escape;    break;
 		case XK_h: ksym = XK_BackSpace; break;
-		case XK_i: ksym = XK_Tab;       break;
+		case XK_i: ksym = XK_space;     break;
 		case XK_j: /* fallthrough */
 		case XK_J: /* fallthrough */
 		case XK_m: /* fallthrough */
@@ -544,7 +544,6 @@ insert:
 		sel = curr = matches;
 		calcoffsets();
 		break;
-	case XK_ISO_Left_Tab: // shift + tab
 	case XK_Left:
 	case XK_KP_Left:
 		if (cursor > 0 && (!sel || !sel->left || lines > 0)) {
@@ -554,6 +553,7 @@ insert:
 		if (lines > 0)
 			return;
 		/* fallthrough */
+	case XK_ISO_Left_Tab: // shift + tab
 	case XK_Up:
 	case XK_KP_Up:
 		if (sel && sel->left && (sel = sel->left)->right == curr) {
@@ -585,7 +585,6 @@ insert:
 		if (sel)
 			sel->out = 1;
 		break;
-	case XK_Tab:
 	case XK_Right:
 	case XK_KP_Right:
 		if (text[cursor] != '\0') {
@@ -595,6 +594,7 @@ insert:
 		if (lines > 0)
 			return;
 		/* fallthrough */
+	case XK_Tab:
 	case XK_Down:
 	case XK_KP_Down:
 		if (sel && sel->right && (sel = sel->right) == next) {
