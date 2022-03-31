@@ -47,6 +47,8 @@ static struct item *matches, *matchend;
 static struct item *prev, *curr, *next, *sel;
 static int mon = -1, screen;
 
+static int outputselnum = 0;
+
 static Atom clip, utf8;
 static Display *dpy;
 static Window root, parentwin, win;
@@ -577,6 +579,20 @@ insert:
 		break;
 	case XK_Return:
 	case XK_KP_Enter:
+		if (outputselnum) {
+			int i;
+			struct item *it;
+			for (i = 0, it = items; it && it->text; i++, it++) {
+				if (it == sel) {
+					printf("%d", i);
+					cleanup();
+					exit(0);
+				}
+			}
+			printf("-1");
+			cleanup();
+			exit(1);
+		}
 		puts((sel && !(ev->state & ShiftMask)) ? sel->text : text);
 		if (!(ev->state & ControlMask)) {
 			cleanup();
@@ -807,7 +823,7 @@ setup(void)
 static void
 usage(void)
 {
-	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+	fputs("usage: dmenu [-bfinv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
 	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]\n", stderr);
 	exit(1);
 }
@@ -832,7 +848,9 @@ main(int argc, char *argv[])
 		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 			fstrncmp = strncasecmp;
 			fstrstr = cistrstr;
-		} else if (i + 1 == argc)
+		} else if (!strcmp(argv[i], "-n")) /* output index of selection instead of selection itself */
+			outputselnum = 1;
+		else if (i + 1 == argc)
 			usage();
 		/* these options take one argument */
 		else if (!strcmp(argv[i], "-l"))   /* number of lines in vertical list */
