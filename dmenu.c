@@ -48,6 +48,7 @@ static struct item *prev, *curr, *next, *sel;
 static int mon = -1, screen;
 
 static int outputselnum = 0;
+static int outputusertext = 0;
 
 static Atom clip, utf8;
 static Display *dpy;
@@ -593,7 +594,7 @@ insert:
 			cleanup();
 			exit(1);
 		}
-		puts((sel && !(ev->state & ShiftMask)) ? sel->text : text);
+		puts((sel && !(ev->state & ShiftMask) && !outputusertext) ? sel->text : text);
 		if (!(ev->state & ControlMask)) {
 			cleanup();
 			exit(0);
@@ -823,7 +824,7 @@ setup(void)
 static void
 usage(void)
 {
-	fputs("usage: dmenu [-bfinv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+	fputs("usage: dmenu [-bfinuv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
 	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]\n", stderr);
 	exit(1);
 }
@@ -850,6 +851,8 @@ main(int argc, char *argv[])
 			fstrstr = cistrstr;
 		} else if (!strcmp(argv[i], "-n")) /* output index of selection instead of selection itself */
 			outputselnum = 1;
+		else if (!strcmp(argv[i], "-u"))
+			outputusertext = 1;
 		else if (i + 1 == argc)
 			usage();
 		/* these options take one argument */
