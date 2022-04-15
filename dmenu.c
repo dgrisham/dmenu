@@ -49,6 +49,7 @@ static int mon = -1, screen;
 
 static int outputselnum = 0;
 static int outputusertext = 0;
+static int initialize_with_first_input = 0;
 
 static Atom clip, utf8;
 static Display *dpy;
@@ -818,13 +819,21 @@ setup(void)
 		grabfocus();
 	}
 	drw_resize(drw, mw, mh);
+
+	if (initialize_with_first_input) {
+		strncpy(text, sel->text, sizeof text - 1);
+		text[sizeof text - 1] = '\0';
+		cursor = strlen(text);
+		match();
+	}
+
 	drawmenu();
 }
 
 static void
 usage(void)
 {
-	fputs("usage: dmenu [-bfinuv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+	fputs("usage: dmenu [-befinuv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
 	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]\n", stderr);
 	exit(1);
 }
@@ -842,6 +851,8 @@ main(int argc, char *argv[])
 			exit(0);
 		} else if (!strcmp(argv[i], "-b")) /* appears at the bottom of the screen */
 			topbar = 0;
+		else if (!strcmp(argv[i], "-e"))   /* initialize input text with first option */
+			initialize_with_first_input = 1;
 		else if (!strcmp(argv[i], "-f"))   /* grabs keyboard before reading stdin */
 			fast = 1;
 		else if (!strcmp(argv[i], "-F"))   /* grabs keyboard before reading stdin */
@@ -905,6 +916,7 @@ main(int argc, char *argv[])
 		readstdin();
 		grabkeyboard();
 	}
+
 	setup();
 	run();
 
